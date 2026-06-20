@@ -1,6 +1,14 @@
 # 腸活診断
 
-生活習慣に関する10問から腸活の状態をセルフチェックし、結果に応じた改善ヒントを表示する Google Apps Script Web アプリです。
+排泄と消化、免疫・睡眠、日常習慣に関する30問を3段階で診断し、結果に応じた改善ヒントを表示する Google Apps Script Web アプリです。
+
+## アプリにアクセス
+
+[腸内環境ヘルスチェックを開く](https://script.google.com/macros/s/AKfycbyFTJhxHD4SHT9pe8M-2QL7xgxGcAFJpSybL671DSQN2uuz8Y5iw-5h8bilNLeDKXD1EA/exec)
+
+スマートフォンのカメラで以下のQRコードを読み取ってアクセスできます。
+
+![腸内環境ヘルスチェック QRコード](assets/chokatsu-shindan-qr.png)
 
 ## セットアップ
 
@@ -17,8 +25,4 @@ npm run push
 
 ## デプロイ
 
-```bash
-npm run deploy
-```
-
-初回デプロイ後、GAS 管理画面でウェブアプリの実行ユーザーとアクセス権限を確認してください。
+`main` ブランチへのpushを契機に、GitHub ActionsがGASへの同期とウェブアプリの再デプロイを行います。
