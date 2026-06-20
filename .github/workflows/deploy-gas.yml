@@ -33,3 +33,12 @@ jobs:
           jq -e '.scriptId and .rootDir' .clasp.json >/dev/null
       - name: GAS に反映
         run: npm run push:force
+
+      - name: ウェブアプリをデプロイ
+        env:
+          GAS_DEPLOYMENT_ID: ${{ secrets.GAS_DEPLOYMENT_ID }}
+        run: |
+          test -n "$GAS_DEPLOYMENT_ID" || { echo "GAS_DEPLOYMENT_ID secret is not configured."; exit 1; }
+          npx clasp deploy \
+            --deploymentId "$GAS_DEPLOYMENT_ID" \
+            --description "GitHub Actions ${GITHUB_SHA::7}"
