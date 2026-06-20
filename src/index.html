@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>腸活診断</title>
+  <style>
+    :root {
+      --ink: #243128;
+      --muted: #667168;
+      --cream: #fbf8ef;
+      --card: #ffffff;
+      --green: #4f7f5b;
+      --green-dark: #365f42;
+      --mint: #e5f0e6;
+      --orange: #e79a55;
+      --line: #dfe5dc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, #edf4df 0, transparent 32%),
+        radial-gradient(circle at 90% 16%, #f8e8d4 0, transparent 28%),
+        var(--cream);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      line-height: 1.7;
+    }
+
+    button { font: inherit; }
+
+    .shell {
+      width: min(720px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    .hero { text-align: center; margin-bottom: 28px; }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+
+    h1 { margin: 0; font-size: clamp(38px, 9vw, 64px); line-height: 1.15; }
+    .hero p { margin: 14px auto 0; color: var(--muted); }
+
+    .card {
+      padding: clamp(22px, 5vw, 40px);
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(60, 78, 61, .12);
+    }
+
+    .progress { height: 8px; overflow: hidden; background: var(--mint); border-radius: 99px; }
+    .progress-bar { width: 0; height: 100%; background: var(--green); transition: width .25s ease; }
+    .step { margin: 16px 0 4px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .question { min-height: 82px; margin: 0 0 24px; font-size: clamp(21px, 5vw, 28px); line-height: 1.45; }
+
+    .choices { display: grid; gap: 10px; }
+    .choice, .primary {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      color: var(--ink);
+      background: var(--card);
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .choice:hover { transform: translateY(-2px); border-color: var(--green); background: var(--mint); }
+    .primary { border: 0; color: white; background: var(--green); }
+    .primary:hover { background: var(--green-dark); }
+    .loading { color: var(--muted); text-align: center; }
+    .hidden { display: none; }
+
+    .score-ring {
+      display: grid;
+      place-items: center;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 22px;
+      border: 12px solid var(--mint);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      font-size: 38px;
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .score-ring small { display: block; color: var(--muted); font-size: 12px; text-align: center; }
+    .result { text-align: center; }
+    .result h2 { margin: 0 0 8px; font-size: 30px; }
+    .result p { color: var(--muted); }
+    .tips { margin: 24px 0; padding: 20px 22px 20px 42px; text-align: left; background: var(--mint); border-radius: 18px; }
+    .notice { margin-top: 18px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    @media (max-width: 520px) {
+      .shell { padding-top: 32px; }
+      .card { border-radius: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <span class="eyebrow">GUT HEALTH CHECK</span>
+      <h1>腸活診断</h1>
+      <p>10個の質問で、いまの生活習慣をやさしく振り返ります。</p>
+    </header>
+
+    <section class="card">
+      <div id="loading" class="loading">診断を準備しています…</div>
+
+      <div id="quiz" class="hidden">
+        <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+        <div id="step" class="step"></div>
+        <h2 id="question" class="question"></h2>
+        <div class="choices">
+          <button class="choice" data-score="2">はい、できている</button>
+          <button class="choice" data-score="1">ときどきできている</button>
+          <button class="choice" data-score="0">あまりできていない</button>
+        </div>
+      </div>
+
+      <div id="result" class="result hidden">
+        <div class="score-ring"><div><span id="score"></span><small>20点満点</small></div></div>
+        <h2 id="level"></h2>
+        <p id="message"></p>
+        <ul id="tips" class="tips"></ul>
+        <button id="retry" class="primary">もう一度診断する</button>
+      </div>
+    </section>
+    <p class="notice">この診断は健康状態を判定する医療行為ではありません。</p>
+  </main>
+
+  <script>
+    let questions = [];
+    let currentIndex = 0;
+    let answers = {};
+
+    const loading = document.getElementById('loading');
+    const quiz = document.getElementById('quiz');
+    const result = document.getElementById('result');
+
+    function startDiagnosis(items) {
+      questions = items;
+      currentIndex = 0;
+      answers = {};
+      loading.classList.add('hidden');
+      result.classList.add('hidden');
+      quiz.classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const item = questions[currentIndex];
+      document.getElementById('step').textContent = `${currentIndex + 1} / ${questions.length}`;
+      document.getElementById('question').textContent = item.text;
+      document.getElementById('progressBar').style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+    }
+
+    function answer(score) {
+      answers[questions[currentIndex].id] = Number(score);
+      currentIndex += 1;
+      if (currentIndex < questions.length) {
+        renderQuestion();
+        return;
+      }
+
+      quiz.classList.add('hidden');
+      loading.textContent = '診断結果をまとめています…';
+      loading.classList.remove('hidden');
+      google.script.run
+        .withSuccessHandler(showResult)
+        .withFailureHandler(showError)
+        .diagnoseGutHealth(answers);
+    }
+
+    function showResult(data) {
+      loading.classList.add('hidden');
+      document.getElementById('score').textContent = data.score;
+      document.getElementById('level').textContent = data.level;
+      document.getElementById('message').textContent = data.message;
+      document.getElementById('tips').innerHTML = data.tips.map((tip) => `<li>${tip}</li>`).join('');
+      result.classList.remove('hidden');
+    }
+
+    function showError(error) {
+      loading.textContent = `エラーが発生しました: ${error.message || error}`;
+    }
+
+    document.querySelectorAll('.choice').forEach((button) => {
+      button.addEventListener('click', () => answer(button.dataset.score));
+    });
+
+    document.getElementById('retry').addEventListener('click', () => startDiagnosis(questions));
+
+    google.script.run
+      .withSuccessHandler(startDiagnosis)
+      .withFailureHandler(showError)
+      .getDiagnosisQuestions();
+  </script>
+</body>
+</html>

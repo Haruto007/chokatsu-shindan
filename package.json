@@ -1,0 +1,17 @@
+{
+  "name": "chokatsu-shindan",
+  "version": "1.0.0",
+  "private": true,
+  "description": "腸活診断 Google Apps Script Web アプリ",
+  "scripts": {
+    "login": "clasp login",
+    "create": "clasp create --type standalone --title \"腸活診断\" --rootDir src",
+    "push": "clasp push",
+    "push:force": "clasp push -f",
+    "open": "clasp open",
+    "deploy": "clasp deploy"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.3.0"
+  }
+}
