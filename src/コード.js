@@ -1,60 +1,144 @@
-const DIAGNOSIS_QUESTIONS = [
-  { id: 'vegetables', text: '野菜・海藻・きのこ類を毎日食べていますか？' },
-  { id: 'fermented', text: '発酵食品を週4日以上食べていますか？' },
-  { id: 'water', text: '水やお茶を1日1.5L程度飲んでいますか？' },
-  { id: 'breakfast', text: '朝食を定期的に食べていますか？' },
-  { id: 'exercise', text: '週2回以上、軽く汗ばむ運動をしていますか？' },
-  { id: 'sleep', text: '睡眠時間を6時間以上確保できていますか？' },
-  { id: 'stress', text: 'リラックスする時間を日々作れていますか？' },
-  { id: 'rhythm', text: '食事や睡眠の時間はおおむね一定ですか？' },
-  { id: 'bowel', text: 'すっきりした排便が週5日以上ありますか？' },
-  { id: 'chewing', text: 'よく噛んで、ゆっくり食事をしていますか？' }
+const DIAGNOSIS_STAGES = [
+  {
+    id: 'digestion',
+    number: 1,
+    title: '排泄と消化の状態',
+    subtitle: '滞り度チェック',
+    introduction: 'まずは排泄と消化の状態（滞り度チェック）を診断してみましょう',
+    questions: [
+      question_('digestion-1', 'お通じの頻度とスッキリ感は？', ['毎日快調', '2〜3日に一度', '4日以上出ないことがある', '毎日あるが残便感がある']),
+      question_('digestion-2', '食後にお腹の張りや胃もたれを感じますか？', ['全くない', 'たまにある', '週に数回感じる', 'ほぼ毎日感じる']),
+      question_('digestion-3', 'おならの臭いや回数が気になりますか？', ['全く気にならない', 'たまに気になる', '臭いや回数が頻繁に気になる', '家族から指摘されることがある']),
+      question_('digestion-4', 'パン、麺類、お菓子など、小麦粉や甘いものの摂取頻度は？', ['週に1〜2回程度', '週に3〜5回程度', 'ほぼ毎日', '1日3食のうち必ずどれかを取る']),
+      question_('digestion-5', '味噌・納豆・漬物など、発酵食品を意識して摂っていますか？', ['毎日2種類以上摂っている', '週に3〜4回程度', 'ほとんど摂らない', '摂り方が分からないので諦めている']),
+      question_('digestion-6', '野菜やきのこ、海藻など食物繊維は十分ですか？', ['毎食意識して摂っている', '意識はするが不足しがち', 'ほとんど摂れていない', '肉や加工食品中心である']),
+      question_('digestion-7', '肌荒れ、ニキビ、吹き出物など、皮膚のトラブルは気になりますか？', ['全く気にならない', '生理前だけ気になる', '季節の変わり目に気になる', '慢性的に常に気になる']),
+      question_('digestion-8', '日中の集中力や気分が落ち込みやすいと感じますか？', ['常にポジティブで集中できる', 'たまに気分が落ち込む', '慢性的に疲労感やだるさを感じる', '何事にもやる気が出ない']),
+      question_('digestion-9', '健康診断の結果や、体型の変化への関心度は？', ['常に数値を意識している', '気にはなるが、特に何もしていない', '毎年少しずつ悪くなっている', '何から改善していいか分からない']),
+      question_('digestion-10', 'ご自身の腸内環境に自信がありますか？', ['大いに自信がある', 'まあまあ自信がある', 'あまり自信がない', '全く自信がなく、専門家の助けが欲しい'])
+    ],
+    results: [
+      result_(10, '🟢', '整え始め型', '今のうちに整えれば一気に変わるタイプです。大きな不調はないものの、このままだと少しずつ乱れていく可能性があります。', ['生活習慣を少し整える', '体調・肌・メンタルの変化を観察する', '今のタイミングから無理なく始める']),
+      result_(20, '🟡', '滞り注意型', 'すでに腸の乱れが始まっているタイプです。疲れやすさ、肌トラブル、便通の違和感などのサインが出始めている可能性があります。', ['気になるサインを放置しない', '発酵食品と食物繊維を意識する', '生活リズムを整えて慢性化を防ぐ']),
+      result_(30, '🔴', '根本改善必要型', '体の内側からリセットが必要な状態です。慢性的な疲労、消化不良、メンタルの不安定さなど、腸内環境の乱れが深い可能性があります。', ['食事と生活習慣を根本から見直す', '一度に変えず継続できる方法を選ぶ', '必要に応じて専門家へ相談する'])
+    ]
+  },
+  {
+    id: 'deep-health',
+    number: 2,
+    title: '体内の巡りと免疫・睡眠',
+    subtitle: '深層チェック',
+    introduction: '次は体内の巡りと免疫・睡眠（深層チェック）を診断してみましょう',
+    questions: [
+      question_('deep-health-11', '風邪をひきやすい、または体調を崩しやすいと感じますか？', ['めったにない', '季節の変わり目だけ', '常に体調が不安定', '疲れが溜まるとすぐに崩す']),
+      question_('deep-health-12', '寝つきの悪さや、夜中に目覚めることはありますか？', ['ぐっすり眠れる', 'たまにある', '週に数回ある', 'ほぼ毎晩あり、睡眠に不満']),
+      question_('deep-health-13', '生理前の不調や更年期の症状（ホットフラッシュ等）の重さは？', ['ほとんど感じない', '軽い不調がある', '毎回重く、生活に影響', '薬や病院に頼ることが多い']),
+      question_('deep-health-14', 'ほぼ毎日、冷たい飲み物（アイスコーヒー、ジュース等）を飲んでいますか？', ['ほとんど温かいものを飲む', 'たまに飲む', '昼食時など必ず冷たいものを飲む', '季節を問わず、冷たい飲み物が手放せない']),
+      question_('deep-health-15', 'コーヒーやお酒、または甘いものへの依存度が高いですか？', ['全く依存していない', '疲れた時に少し', '毎日欠かせない', '依存を自覚しており、量を減らせない']),
+      question_('deep-health-16', 'ダイエットをしても、効果が出ない、またはすぐリバウンドしますか？', ['効果が出やすく維持できる', '運動すれば効果が出る', '食事を制限しても効果が出ない', 'すぐリバウンドし、何をやっても無駄だと感じる']),
+      question_('deep-health-17', '健康的な食事を作りたいが、手間や時間がかかり諦めていますか？', ['手間をかけても作る', '時短できるものだけ作る', 'ほとんど外食や出来合いのもので済ませる', '健康食は難しいと完全に諦めている']),
+      question_('deep-health-18', '健康維持や自己投資に、年間10万円以上の予算を割いていますか？', ['20万円以上投資している', '10万円以上投資している', '5万円未満である', 'ほとんど費用をかけていない']),
+      question_('deep-health-19', '麹や発酵食品を使った「料理法」や「作り方」に関心がありますか？', ['自分で作り、深く学びたい', '興味はあるが、作り方は知らない', '興味はあるが、難しそう', 'あまり興味がない']),
+      question_('deep-health-20', 'この診断で得たい結果は？', ['自分の体質タイプを知りたい', '具体的な食事の改善策を知りたい', 'プロの指導を受けて根本から体を変えたい', '収益化できる健康ビジネスに関心がある'])
+    ],
+    results: [
+      result_(10, '🟢', '整えスタート型', '健康への意識が比較的高く、大きな乱れは見られません。今は不調改善よりも「予防」と「より良い未来への投資」の段階です。', ['発酵食品を習慣化する', '食物繊維を意識する', '睡眠の質を高める', '腸活を生活習慣として取り入れる']),
+      result_(20, '🟡', '滞り改善型', '疲れやすさ、睡眠の質、ダイエット、食生活などに、見直したいサインが見られます。', ['食生活を見直す', '発酵食品と食物繊維を強化する', '冷え対策を取り入れる', '腸内環境を整える習慣を作る']),
+      result_(30, '🔴', '根本リセット型', '慢性的な疲労感、睡眠トラブル、リバウンド、食生活の乱れなどが重なっている可能性があります。', ['専門的なサポートを受けながら進める', '生活習慣を根本から見直す', '正しい知識を学ぶ', '継続できる環境を作る'])
+    ]
+  },
+  {
+    id: 'habits',
+    number: 3,
+    title: '日常の習慣と見逃されがちな不調',
+    subtitle: '行動と慢性炎症チェック',
+    introduction: '最後は日常の習慣と見逃されがちな不調（行動と慢性炎症チェック）を診断してみましょう',
+    questions: [
+      question_('habits-21', '日中、頻繁に眠気を感じたり、食後に集中力が低下したりしますか？', ['全くない', 'たまにある', '昼食後によくある', 'ほぼ毎日あり、業務に影響がある']),
+      question_('habits-22', '日常的な頭痛や関節の違和感（痛み）を感じることがありますか？', ['全くない', 'たまにある', '天候や疲労時に感じる', '慢性的に不調を感じる']),
+      question_('habits-23', '朝食は決まった時間に、質の良いものを摂取していますか？', ['毎日決まった時間に摂る', '毎日摂るが時間や内容がバラバラ', '摂らないことが多い', '欠食が習慣になっている']),
+      question_('habits-24', '1日1.5リットル以上の水を意識して摂取していますか？', ['意識的に摂取している', '意識はするが達しない', '喉が渇いた時だけ飲む', 'コーヒーやお茶で水分補給している']),
+      question_('habits-25', 'コンビニ弁当やインスタント食品を週に数回以上利用しますか？', ['ほとんど利用しない', '週に1〜2回程度', '週に3〜5回程度', 'ほぼ毎日利用している']),
+      question_('habits-26', '新しい健康情報やダイエット法にすぐ飛びつく傾向がありますか？', ['専門家の意見を吟味して取り入れる', '情報を見て試してみる', 'すぐに試すが続かない', 'どの情報が正しいか分からず混乱している']),
+      question_('habits-27', '家族の食事の栄養バランスに自信がありますか？', ['管理栄養士レベルで自信がある', '概ねできていると思う', '不足している自覚はある', 'どこが足りないか全く分からない']),
+      question_('habits-28', '酵素玄米を自分で炊く難しさや手間に抵抗を感じていますか？', ['手間は厭わない', '簡単に炊けるならやってみたい', '難しそうで挫折しそう', '失敗が怖くて挑戦できていない']),
+      question_('habits-29', '健康のために新しい習慣を始めても、継続することは得意ですか？', ['習慣化が得意で長く続けられる', '意識すれば続けられる', '最初は頑張るが途中でやめてしまう', '何度も挑戦したが続かなかった']),
+      question_('habits-30', '専門家のサポートがあれば、すぐにでも体質改善を始めたいですか？', ['はい、専門家のサポートがあれば即座に始めたい', '良い方法があれば前向きに検討したい', '自分でできることから試したい', '今は忙しいので時期を待ちたい'])
+    ],
+    results: [
+      result_(10, '🟢', '健康習慣マスター型', '健康に関する知識や習慣が比較的身についています。今ある土台を活かしながら、より深く学び、続けていきましょう。', ['発酵食品を上手に活用する', '家族の健康管理に活かす', '正しい知識を深める', '継続できる習慣を磨く']),
+      result_(20, '🟡', '習慣改善チャレンジ型', '健康への関心は高いものの、続かない、忙しくて後回しになる、情報が多すぎて迷うといった課題が見られます。', ['完璧主義をやめる', '小さな習慣から始める', '正しい情報を整理する', '継続できる環境を作る']),
+      result_(30, '🔴', 'サポート活用型', '食習慣の乱れ、水分不足、情報迷子、継続の難しさなどが重なっている可能性があります。', ['正しい順番で取り組む', 'サポートを受けながら進める', '習慣化できる仕組みを持つ', '一人で頑張りすぎない'])
+    ]
+  }
 ];
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
-    .setTitle('腸活診断')
+    .setTitle('腸内環境ヘルスチェック')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-function getDiagnosisQuestions() {
-  return DIAGNOSIS_QUESTIONS;
+function getDiagnosisStages() {
+  return DIAGNOSIS_STAGES.map((stage) => ({
+    id: stage.id,
+    number: stage.number,
+    title: stage.title,
+    subtitle: stage.subtitle,
+    introduction: stage.introduction,
+    questions: stage.questions
+  }));
 }
 
-function diagnoseGutHealth(answers) {
+function diagnoseStage(stageId, answers) {
+  const stage = DIAGNOSIS_STAGES.find((item) => item.id === stageId);
+  if (!stage) {
+    throw new Error('診断ステージが見つかりません。');
+  }
+
   const normalizedAnswers = answers || {};
-  const score = DIAGNOSIS_QUESTIONS.reduce((total, question) => {
-    const value = Number(normalizedAnswers[question.id]);
-    return total + (Number.isFinite(value) ? Math.max(0, Math.min(2, value)) : 0);
+  if (Object.keys(normalizedAnswers).length !== stage.questions.length) {
+    throw new Error('すべての質問に回答してください。');
+  }
+
+  const score = stage.questions.reduce((total, question) => {
+    const answer = String(normalizedAnswers[question.id] || '').toUpperCase();
+    if (!Object.prototype.hasOwnProperty.call(question.scores, answer)) {
+      throw new Error('A〜Dの中から選んでください。');
+    }
+    return total + question.scores[answer];
   }, 0);
 
-  return buildDiagnosis_(score);
+  const diagnosis = stage.results.find((item) => score <= item.maxScore);
+  return {
+    stageId: stage.id,
+    stageNumber: stage.number,
+    stageTitle: stage.title,
+    score: score,
+    icon: diagnosis.icon,
+    type: diagnosis.type,
+    message: diagnosis.message,
+    recommendations: diagnosis.recommendations
+  };
 }
 
-function buildDiagnosis_(score) {
-  if (score >= 16) {
-    return {
-      score: score,
-      level: 'すこやか腸タイプ',
-      message: 'よい習慣が身についています。無理なく続けることを大切にしましょう。',
-      tips: ['食材の種類を少しずつ増やす', '現在の睡眠と運動習慣を維持する', '体調の変化を定期的に振り返る']
-    };
-  }
-
-  if (score >= 10) {
-    return {
-      score: score,
-      level: 'のびしろ腸タイプ',
-      message: '基本はできています。続けやすい習慣を一つ加えると、さらに整いやすくなります。',
-      tips: ['毎食どれか一つ食物繊維を加える', '起床後にコップ一杯の水を飲む', '食事時間をできる範囲でそろえる']
-    };
-  }
-
+function question_(id, text, choices) {
+  const labels = ['A', 'B', 'C', 'D'];
   return {
-    score: score,
-    level: 'いたわり腸タイプ',
-    message: '生活リズムを整えるところから、焦らず小さく始めるのがおすすめです。',
-    tips: ['朝食か水分補給のどちらかを習慣化する', '一日10分だけ歩く時間を作る', '気になる症状が続く場合は医療機関に相談する']
+    id: id,
+    text: text,
+    choices: choices.map((choice, index) => ({ key: labels[index], text: choice })),
+    scores: { A: 0, B: 1, C: 2, D: 3 }
+  };
+}
+
+function result_(maxScore, icon, type, message, recommendations) {
+  return {
+    maxScore: maxScore,
+    icon: icon,
+    type: type,
+    message: message,
+    recommendations: recommendations
   };
 }
 
