@@ -20,9 +20,16 @@ jobs:
       - name: 依存関係をインストール
         run: npm ci
       - name: 認証ファイルを復元
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+          CLASP_JSON: ${{ secrets.CLASP_JSON }}
         run: |
-          echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
-          echo '${{ secrets.CLASP_JSON }}' > .clasp.json
+          test -n "$CLASPRC_JSON" || { echo "CLASPRC_JSON secret is not configured."; exit 1; }
+          test -n "$CLASP_JSON" || { echo "CLASP_JSON secret is not configured."; exit 1; }
+          printf '%s' "$CLASPRC_JSON" > ~/.clasprc.json
+          printf '%s' "$CLASP_JSON" > .clasp.json
+          chmod 600 ~/.clasprc.json .clasp.json
+          jq -e . ~/.clasprc.json >/dev/null
+          jq -e '.scriptId and .rootDir' .clasp.json >/dev/null
       - name: GAS に反映
         run: npm run push:force
-
