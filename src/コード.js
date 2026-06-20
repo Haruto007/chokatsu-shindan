@@ -75,6 +75,7 @@ const DIAGNOSIS_STAGES = [
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover')
     .setTitle('腸内環境ヘルスチェック')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
@@ -141,4 +142,3 @@ function result_(maxScore, icon, type, message, recommendations) {
     recommendations: recommendations
   };
 }
-
