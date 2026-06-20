@@ -42,3 +42,20 @@ jobs:
           npx clasp deploy \
             --deploymentId "$GAS_DEPLOYMENT_ID" \
             --description "GitHub Actions ${GITHUB_SHA::7}"
+
+      - name: 匿名アクセスを確認
+        env:
+          GAS_DEPLOYMENT_ID: ${{ secrets.GAS_DEPLOYMENT_ID }}
+        run: |
+          public_url="https://script.google.com/macros/s/${GAS_DEPLOYMENT_ID}/exec"
+          for attempt in {1..12}; do
+            if curl --fail --location --silent --show-error "$public_url" --output deployed.html \
+              && grep -q '腸内環境ヘルスチェック' deployed.html; then
+              echo "Public access verified: $public_url"
+              exit 0
+            fi
+            echo "Waiting for public deployment... ($attempt/12)"
+            sleep 5
+          done
+          echo "The web app is not publicly accessible."
+          exit 1
