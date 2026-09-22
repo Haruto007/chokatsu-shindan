@@ -110,7 +110,24 @@
     .recommendations ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
     .recommendations li::before { content: "✅"; margin-right: 8px; }
     .continue-copy { margin: 28px 0 14px; font-weight: 800; }
-    .finish-message { margin: 28px 0 0; padding: 18px; background: #fff6e9; border-radius: 16px; font-weight: 800; }
+    .stop-message { margin: 28px 0 0; padding: 18px; background: #fff6e9; border-radius: 16px; font-weight: 800; }
+    .finish-message { margin: 28px 0 0; padding: 22px; background: #fff6e9; border-radius: 16px; text-align: left; }
+    .finish-message p { margin: 0 0 10px; font-weight: 700; }
+    .finish-message .finish-lead { font-size: 18px; font-weight: 800; text-align: center; }
+    .line-link {
+      display: block;
+      margin-top: 16px;
+      padding: 15px 18px;
+      border-radius: 16px;
+      color: #fff;
+      background: #06c755;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(6, 199, 85, .26);
+    }
+    .line-link:hover { background: #05b34c; }
+    .line-link:active { transform: scale(.985); }
     .notice { margin-top: 18px; color: var(--muted); font-size: 12px; text-align: center; }
 
     @media (max-width: 520px) {
@@ -158,7 +175,10 @@
       .recommendations ul { gap: 5px; }
       .continue-copy { margin: 19px 0 10px; font-size: 14px; }
       .result-actions button { padding: 10px 12px; font-size: 13px; }
-      .finish-message { margin-top: 18px; padding: 14px; font-size: 14px; }
+      .stop-message { margin-top: 18px; padding: 14px; font-size: 14px; }
+      .finish-message { margin-top: 18px; padding: 15px; font-size: 14px; }
+      .finish-message .finish-lead { font-size: 16px; }
+      .line-link { margin-top: 13px; padding: 13px 14px; border-radius: 13px; font-size: 14px; }
       .notice { margin: 13px 8px 0; font-size: 10px; line-height: 1.5; }
 
       body[data-view="quiz"] .hero,
@@ -232,7 +252,14 @@
             <button id="continue" class="primary"></button>
           </div>
         </div>
-        <p id="finishMessage" class="finish-message hidden">診断は以上です。お疲れ様でした。</p>
+        <p id="stopMessage" class="stop-message hidden">診断は以上です。お疲れ様でした。</p>
+        <div id="finishMessage" class="finish-message hidden">
+          <p class="finish-lead">診断お疲れさまでした！</p>
+          <p>あなたの腸タイプがわかったら、次は「どう整えていくか」が大切です。</p>
+          <p>腸美CHO-BI公式LINEでは腸活レシピ・食事や生活習慣のヒント・ととわ.30の最新情報などをお届けしています。</p>
+          <p>あなたの腸活を、今日から一歩ずつ。</p>
+          <a class="line-link" href="https://lin.ee/55vtL7V" target="_blank" rel="noopener noreferrer">腸美CHO-BI公式LINEを友だち追加</a>
+        </div>
       </div>
     </section>
     <p class="notice">この診断は健康状態を判定する医療行為ではありません。症状が続く場合は医療機関へご相談ください。</p>
@@ -326,6 +353,7 @@
       document.getElementById('recommendations').replaceChildren(...data.recommendations.map(createRecommendation));
       document.getElementById('continueArea').classList.toggle('hidden', !hasNextStage);
       document.getElementById('finishMessage').classList.toggle('hidden', hasNextStage);
+      document.getElementById('stopMessage').classList.add('hidden');
 
       if (hasNextStage) {
         const nextStage = stages[currentStageIndex + 1];
@@ -342,7 +370,7 @@
 
     function finishDiagnosis() {
       document.getElementById('continueArea').classList.add('hidden');
-      document.getElementById('finishMessage').classList.remove('hidden');
+      document.getElementById('stopMessage').classList.remove('hidden');
     }
 
     function continueDiagnosis() {
